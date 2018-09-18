@@ -2,10 +2,19 @@
 
     class OnlineService{
         constructor(){
-
+            this.callbacks = {
+                online:[],
+                offline:[]
+            };
+            this.lastStatus=null;
+            this.checkUrl = 'https://jsonplaceholder.typicode.com/users';
+            this.checkDelay= 15000;
+            this.isRequestPending = false;
         }
         
         init(){
+            this.initBrowserApi();
+            this.initFallbackCheck();
             return this;
         }
 
@@ -14,10 +23,71 @@
         }
 
         onOnline(func){
-            window.addEventListener('online',func);
+            this.callbacks.online.push(func);
+            
         }
         onOffline(func){
-            window.addEventListener('offline',func);
+            this.callbacks.offline.push(func)
+            
+        }
+
+        initBrowserApi(){
+            window.addEventListener('online',()=>{
+                this.emitOnline();
+            });
+            window.addEventListener('offline',()=>{
+                this.emitOffline();
+            });
+        }
+        initFallbackCheck(){
+            const handler = ()=>{
+                if(this.isRequestPending){
+                    return;
+                }
+                this.isRequestPending=true;
+                this.sendRequest()
+                .then(()=>{
+                    this.emitOnline();
+                    this.isRequestPending=false;
+                })
+                .catch((err)=>{
+                    this.emitOffline();
+                    this.isRequestPending=false;
+                });
+            }
+            setInterval(()=>{
+                handler();
+            },this.checkDelay);
+            handler();
+        }
+
+        sendRequest(){
+            return new Promise((resolve,reject)=>{
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET',this.checkUrl);
+                xhr.onload = function(){
+                    resolve();
+                }
+                xhr.onerror = function(err){
+                    reject(err);
+                }
+                xhr.send();
+            });
+           
+        }
+
+        emitOnline(){
+            if(this.lastStatus!=='online'){
+                this.lastStatus='online';
+                this.callbacks.online.forEach((cb)=>cb());
+            }
+        }
+        emitOffline(){
+            if(this.lastStatus!=='offline'){
+                this.lastStatus ='offline';
+                this.callbacks.offline.forEach((cb)=>cb());
+            }
+            
         }
         
     }
