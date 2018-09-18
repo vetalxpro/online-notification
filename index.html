@@ -6,6 +6,24 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <style>
+        html{
+            height: 100%;
+        }
+        body{
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .wrapper{
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
         .green{
             color:green;
         }
@@ -15,8 +33,11 @@
     </style>
 </head>
 <body>
-    <h1>Internet Notification</h1>
-    <h3>Status:<span class="" id="status">-</span></div>
+    <div class="wrapper">
+            <h1>Internet Notification</h1>
+            <h3>Status:<span id="status">-</span></h3>
+    </div>
+    
     <script src="main.js"></script>
 </body>
 </html>

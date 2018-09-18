@@ -8,7 +8,7 @@
             };
             this.lastStatus=null;
             this.checkUrl = 'https://jsonplaceholder.typicode.com/users';
-            this.checkDelay= 15000;
+            this.checkDelay= 30000;
             this.isRequestPending = false;
         }
         
