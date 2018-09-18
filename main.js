@@ -71,30 +71,35 @@
             this.statusEl.classList.add(this.classes.offline);
         }
     }
-    const onlineService = new OnlineService().init();
-    const statusComponent = new StatusComponent().init();
-    const soundService = new SoundService();
 
 
-    const onlineHandler=()=>{
-        statusComponent.setOnline();
-        soundService.playOnline();
+    class App{
+        constructor(){
+            this.onlineService = new OnlineService().init();
+            this.statusComponent = new StatusComponent().init();
+            this.soundService =  new SoundService();
+        }
+
+        start(){
+            const onlineHandler=()=>{
+                this.statusComponent.setOnline();
+                this.soundService.playOnline();
+            }
+        
+            const offlineHandler=()=>{
+                this.statusComponent.setOffline();
+                this.soundService.playOffline();
+            }
+            this.onlineService.onOnline(onlineHandler);
+            this.onlineService.onOffline(offlineHandler);
+            const isOnline = this.onlineService.getOnlineStatus;
+            if(isOnline){
+                onlineHandler();
+            }else{
+                offlineHandler();
+            }
+        }
     }
 
-    const offlineHandler=()=>{
-        statusComponent.setOffline();
-        soundService.playOffline();
-    }
-
-    onlineService.onOnline(onlineHandler);
-    onlineService.onOffline(offlineHandler);
-
-    const isOnline = onlineService.getOnlineStatus;
-
-    if(isOnline){
-        onlineHandler();
-    }else{
-        offlineHandler();
-    }
-    
+    new App().start();
 })();
