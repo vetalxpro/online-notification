@@ -5,6 +5,10 @@
         online: [],
         offline: []
       };
+      this.statuses = {
+        online: 'online',
+        offline: 'offline'
+      };
       this.lastStatus = null;
       this.checkUrl = 'https://jsonplaceholder.typicode.com/users';
       this.checkDelay = 30000;
@@ -49,7 +53,7 @@
             this.emitOnline();
             this.isRequestPending = false;
           })
-          .catch((err) => {
+          .catch(() => {
             this.emitOffline();
             this.isRequestPending = false;
           });
@@ -64,26 +68,22 @@
       return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.open('GET', this.checkUrl);
-        xhr.onload = function() {
-          resolve();
-        };
-        xhr.onerror = function(err) {
-          reject(err);
-        };
+        xhr.onload = resolve;
+        xhr.onerror = reject;
         xhr.send();
       });
     }
 
     emitOnline() {
-      if (this.lastStatus !== 'online') {
-        this.lastStatus = 'online';
+      if (this.lastStatus !== this.statuses.online) {
+        this.lastStatus = this.statuses.online;
         this.callbacks.online.forEach((cb) => cb());
       }
     }
 
     emitOffline() {
-      if (this.lastStatus !== 'offline') {
-        this.lastStatus = 'offline';
+      if (this.lastStatus !== this.statuses.offline) {
+        this.lastStatus = this.statuses.offline;
         this.callbacks.offline.forEach((cb) => cb());
       }
     }
